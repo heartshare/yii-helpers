@@ -1,0 +1,4 @@
+{
+	"config/_db.inc": "protected/config/_db.inc",
+	"config/main.php": "protected/config/main.php"
+}

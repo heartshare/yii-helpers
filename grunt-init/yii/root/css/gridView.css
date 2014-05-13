@@ -1,0 +1,34 @@
+.table{
+	margin-top: 50px;
+}
+.table a {
+	color: #000;
+}
+.table table.items th{
+
+}
+.table table.items th a:after{
+	content: ' ';
+	height: 0;
+	position: absolute;
+	width: 0;
+	margin-top: 7px;
+	margin-left: 5px;
+}
+.table table.items th a.asc:after
+{
+	width: 0px;
+	height: 0px;
+	border-left: 5px solid transparent;
+	border-right: 5px solid transparent;
+	border-bottom: 5px solid #2f2f2f;
+}
+
+.table table.items th a.desc:after
+{
+	width: 0px;
+	height: 0px;
+	border-left: 5px solid transparent;
+	border-right: 5px solid transparent;
+	border-top: 5px solid #2f2f2f;
+}

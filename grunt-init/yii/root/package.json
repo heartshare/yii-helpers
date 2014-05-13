@@ -1,0 +1,25 @@
+{
+  "name": "Yii-scaffolding",
+  "description": "Set up a standard environment with a backend and bootstrap",
+  "version": "0.1.0",
+  "homepage": "https://github.com/obiSerra/yii-helpers",
+  "author": {
+    "name": "Roberto Serra",
+    "url": "https://github.com/obiSerra"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/gruntjs/grunt-init.git"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/gruntjs/grunt-init/blob/master/LICENSE-MIT"
+    }
+  ],
+  "preferGlobal": true,
+  "dependencies": {
+    "grunt-string-replace": "~0.2.7",
+    "grunt-contrib-watch": "~0.6.1"
+  }
+}
