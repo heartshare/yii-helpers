@@ -26,7 +26,7 @@
 *              'imagesColumns'=>array('imageFieldName'),
 *              'paths'=>'/../images/directoryName/{fieldName}',
 *              'rename'=>array('{filename}_{ID}'), // {filename} and {ID} are automatically replaced by the relative values
-*              'thumbs'=>array(array('field'=>'thumb','path'=>'/../images/galleries/{id_cartella}','size'=>'300x200'))
+*              'resize'=>array(array('field'=>'thumb','path'=>'/../images/galleries/{id_cartella}','size'=>'300x200'))
 *          ),
 *      );
 *  }
