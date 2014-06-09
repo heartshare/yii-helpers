@@ -1,7 +1,7 @@
 <?php
 /**
 * 
-* Version 1.0.1
+* Version 1.1.0
 * 
 * Author: Roberto Serra - obi.serra@gmail.com
 * 
@@ -26,7 +26,7 @@
 *              'imagesColumns'=>array('imageFieldName'),
 *              'paths'=>'/../images/directoryName/{fieldName}',
 *              'rename'=>array('{filename}_{ID}'), // {filename} and {ID} are automatically replaced by the relative values
-*              'resize'=>array(array('field'=>'thumb','path'=>'/../images/galleries/{id_cartella}','size'=>'300x200'))
+*              'thumb'=>array(array('field'=>'thumb','path'=>'/../images/galleries/{id_cartella}/','width'=>'620','height'=>'620','crop'=>true))
 *          ),
 *      );
 *  }
@@ -36,9 +36,11 @@ class ImagesHandler extends CActiveRecordBehavior{
     public $imagesColumns = array();
     public $paths = array();
     public $rename = array();
-    public $resize = array();
+    public $thumb = array();
     private $oldImage;
 
+
+    private $name;
     private $newImages;
 
     public function checkPath(){
@@ -88,6 +90,7 @@ class ImagesHandler extends CActiveRecordBehavior{
         $this->checkPath();
         foreach( $this->imagesColumns as $k=>$image )
         {
+
             $i = 0;
             $fileSingle = CUploadedFile::getInstance($this->Owner,$image);
             if(!empty($fileSingle)){
@@ -121,10 +124,9 @@ class ImagesHandler extends CActiveRecordBehavior{
                     $model->save();
                 }
                 if(!is_dir(Yii::app()->basePath.$this->paths[$k].'/')) mkdir(Yii::app()->basePath.$this->paths[$k].'/', 0755);
-                //echo 'SAVING '.Yii::app()->basePath.$this->paths[$k].'/'.$this->Owner->{$image}.'<br>';
                 $fileSingle->saveAs(Yii::app()->basePath.$this->paths[$k].'/'.$this->Owner->{$image});
-                if(!empty($this->resize)){
-                    $this->resize(Yii::app()->basePath.$this->paths[$k].'/'.$this->Owner->{$image});
+                if(!empty($this->thumb[$k])){
+                    $this->resize($k,Yii::app()->basePath.$this->paths[$k].'/'.$this->Owner->{$image});
                 }
             }
         }
@@ -145,13 +147,27 @@ class ImagesHandler extends CActiveRecordBehavior{
         return parent::afterSave($event);
     }
 
-    public function resize($filename){
+    public function resize($k,$filename){
         list($width, $height) = getimagesize($filename);
-        $thumb = imagecreatetruecolor($this->resize['width'], $this->resize['height']);
+        $thumb = imagecreatetruecolor($this->thumb[$k]['width'], $this->thumb[$k]['height']);
         $source = imagecreatefromjpeg($filename);
-        imagecopyresized($thumb, $source, 0, 0, 0, 0, $this->resize['width'], $this->resize['height'], $width, $height);
-        imagejpeg($thumb, $filename, 100);
 
+        if($this->thumb[$k]['crop']){\
+            $mX = ($width - $this->thumb[$k]['width']) / 2;
+            $mY = ($height - $this->thumb[$k]['height']) / 2;
+            imagecopyresized($thumb, $source, 0, 0, $mX, $mY, $this->thumb[$k]['width'], $this->thumb[$k]['height'], $this->thumb[$k]['width'], $this->thumb[$k]['height']);
+        } else {
+            imagecopyresized($thumb, $source, 0, 0, 0, 0, $this->thumb[$k]['width'], $this->thumb[$k]['height'], $width, $height);    
+        }
+
+
+        
+        if(!empty($this->name)){
+            $thumbFilename = str_replace($this->name['ext'], '_th'.$this->name['ext'], $filename);
+        } else {
+            $thumbFilename = $filename;    
+        }
+        imagejpeg($thumb, $thumbFilename, 100);
     }
     public function afterFind($event){
         $this->saveOldImage();
@@ -172,6 +188,7 @@ class ImagesHandler extends CActiveRecordBehavior{
             $file = CUploadedFile::getInstance($this->Owner,$image);
             if(is_object($file)){
                 $this->Owner->{$image} = str_replace('.'.$file->extensionName, '', $file->name);
+                $this->name = array('ext' => '.'.$file->extensionName, 'name'=>$file->name);
             }
             else if(!empty($this->oldImage[$k])){
                 $this->Owner->{$image} = $this->oldImage[$k];
