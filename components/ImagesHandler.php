@@ -152,7 +152,7 @@ class ImagesHandler extends CActiveRecordBehavior{
         $thumb = imagecreatetruecolor($this->thumb[$k]['width'], $this->thumb[$k]['height']);
         $source = imagecreatefromjpeg($filename);
 
-        if($this->thumb[$k]['crop']){\
+        if($this->thumb[$k]['crop']){
             $mX = ($width - $this->thumb[$k]['width']) / 2;
             $mY = ($height - $this->thumb[$k]['height']) / 2;
             imagecopyresized($thumb, $source, 0, 0, $mX, $mY, $this->thumb[$k]['width'], $this->thumb[$k]['height'], $this->thumb[$k]['width'], $this->thumb[$k]['height']);
